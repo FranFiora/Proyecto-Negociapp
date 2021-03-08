@@ -1,4 +1,47 @@
 /* Your app custom styles here */
+
+/*#btnRE {
+  margin-top: 30px;
+}*/
+
+/*Toolbar search*/
+#iSearch, #iStore, #iSave {
+  font-size: 20px;
+}
+
+.small-text {
+  font-size: 11px !important;
+}
+
+#btn1, #btn2, #btn3 {
+  padding: 2px;
+}
+
+span {
+  height: 20px;
+}
+
+/*Busqueda*/
+#bBut {
+  padding: 0px;
+}
+
+#comp {
+  width: 100%;
+  height: 100%;
+}
+
+
+/*Pantalla Registro */
+.btnBack {
+  height: 7vh;
+  width: 12vw;
+  border-radius: 50%;
+  outline: none;
+  background-color: #f23242;
+  border: 0px;
+}
+
 /* poppins-regular - latin */
 @font-face {
   font-family: 'Poppins';

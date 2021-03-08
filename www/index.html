@@ -9,8 +9,8 @@
             * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
             * Disables use of inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
                 * Enable inline JS: add 'unsafe-inline' to default-src
-        -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data: content:;">
+        
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data: content:;">-->
 
     <!-- Required meta tags-->
     <meta charset="utf-8">
@@ -34,69 +34,99 @@
 
 <body>
     <div id="app">
+
+				<div class="panel panel-left panel-cover">
+					<div class="display-flex justify-content-center">	
+        				<p id="mName">grande</p>
+					</div>
+					<div class="block block-strong" id="bBut">
+						<button class="button" id="comp">Comprobar sesión</button>
+					</div>
+					<div class="block block-strong" id="bOut">
+						<button class="button" id="signOut">Cerrar sesión</button>
+					</div>
+    			</div>
+
         <!-- Statusbar overlay -->
         <div class="statusbar"></div>
     
         <!-- Your main view, should have "view-main" class -->
         <div class="view view-main">
-       
-            <!-- Top Navbar -->
-            <div class="navbar">
-                <div class="navbar-bg"></div>
-                <div class="navbar-inner">
-                    <div class="left"><i class="icon icon-back"></i></div>
-                    <div class="title">Page Title</div>
-                    <div class="right"><i class="icon icon-forward"></i></div>
-                </div>
-            </div>
     
-            <!-- Toolbar -->
+            <!-- Toolbar
             <div class="toolbar toolbar-bottom">
                 <div class="toolbar-inner">
-                <!-- Toolbar links -->
+                 Toolbar links
                 <a href="#" class="link">Link 1</a>
                 <a href="#" class="link">Link 2</a>
                 </div>
-            </div>
+            </div>-->
         
         <!-- Initial Page, "data-name" contains page name -->
             <div data-name="index" class="page">
                 <!-- Scrollable page content -->
                 <div class="page-content">
                     <div class="block">
-                        <p>Page content goes here</p>
+                    	<h2 class="text-align-center">Negociapp</h2>
+                    	<h4 class="text-align-center">Bienvenido</h4>
+                        <p class="text-align-center">por favor inicia sesión.</p> 
+	                        <div class="list no-hairlines-md">
+						        <ul>
+						          	<li class="item-content item-input item-input-with-info">
+							            <div class="item-inner">
+							              	<div class="item-title item-floating-label">Email</div>
+							              	<div class="item-input-wrap">
+							                	<input type="email" placeholder="Tu email" id="Email" />
+							                	<span class="input-clear-button"></span>
+							              	</div>
+							            </div>
+							        </li>
+						          	<li class="item-content item-input">
+						            	<div class="item-inner">
+						              		<div class="item-title item-floating-label">Contraseña</div>
+						              		<div class="item-input-wrap">
+						                		<input type="password" placeholder="Tu contraseña" id="Pass" />
+						              		</div>
+						            	</div>
+						          	</li>
+						        </ul>
+						    </div>
                         <!-- Link to another page -->
-                        <a href="/about/" data-view=".page-content">About app</a>
-
-                        <!-- In data-popup attribute we specify CSS selector of popup we need to open -->
-                        <p><a href="#" data-popup=".my-popup" class="popup-open">Open Popup</a></p>
-
-                        <!-- And somewhere in DOM -->
-                        <div class="popup my-popup">
-                            <div class="view">
-                                <div class="page">
-                                    <div class="navbar">
-                                        <div class="navbar-bg"></div>
-                                        <div class="navbar-inner">
-                                            <div class="title">Popup</div>
-                                            <div class="right">
-                                                <!-- Link to close popup -->
-                                                <a class="link popup-close">Close</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="page-content">
-                                      ...
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="row text-align-center display-flex justify-content-center">
+                        	<button class="col-80 button button-fill button-round" id="logBtn">Iniciar sesión</button>
+                        	<p class="no-margin col-100">- o -</p>
+                        	<button class="col-80 button button-outline button-round" id="RegisBtn">Registrarse</button>
                         </div>
+                       <!-- <div class="display-flex justify-content-center align-items-flex-end">
+	  						<a href="#" id="btnRE">¿Has olvidado la contraseña?</a>
+	  					</div> -->
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
+
+	<!-- The core Firebase JS SDK is always required and must be listed first -->
+	<script src="https://www.gstatic.com/firebasejs/8.2.9/firebase-app.js"></script>
+
+	<!-- TODO: Add SDKs for Firebase products that you want to use
+	     https://firebase.google.com/docs/web/setup#available-libraries -->
+	<script src="https://www.gstatic.com/firebasejs/8.2.7/firebase-auth.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/8.2.7/firebase-firestore.js"></script>
+	<script>
+	  // Your web app's Firebase configuration
+	  var firebaseConfig = {
+	    apiKey: "AIzaSyAYebyF0APWrjTn2VH0igTTpO7V0mruGzc",
+	    authDomain: "negociapp-17c9c.firebaseapp.com",
+	    projectId: "negociapp-17c9c",
+	    storageBucket: "negociapp-17c9c.appspot.com",
+	    messagingSenderId: "1074677343144",
+	    appId: "1:1074677343144:web:108499c366e52b9a93f39d"
+	  };
+	  // Initialize Firebase
+	  firebase.initializeApp(firebaseConfig);
+	</script>
 
     <script type="text/javascript" src="cordova.js"></script>
     <script type="text/javascript" src="lib/framework7/framework7-bundle.min.js"></script>
