@@ -42,7 +42,8 @@ var userCol = db.collection("usuarios");
 $$(document).on('deviceready', function() {
     console.log("Device is ready!");
 
-
+    $$('#comp').on('click', sesionCheck);
+    $$('#signOut').on('click', logOut);
 
 });
 
@@ -66,8 +67,8 @@ $$(document).on('page:init', '.page[data-name="search"]', function (e) {
         console.log('error '+error);
     })
 
-    $$('#comp').on('click', sesionCheck);
-    $$('#signOut').on('click', logOut);
+    /*$$('#comp').on('click', sesionCheck);
+    $$('#signOut').on('click', logOut);*/
 
 })
 
@@ -108,15 +109,21 @@ $$(document).on('page:init', '.page[data-name="register"]', function (e) {
 /*Cerrar sesión*/
 let logOut = () => {
 
-    firebase.auth().signOut()
-    .then(() => {
-        console.log('Cerrar sesión');
-        mainView.router.navigate('/index/');
-        $$('#mName').text('');
-    })
-    .catch((error) => {
-        console.log('error '+error);
-    });
+    var user = firebase.auth().currentUser;
+
+    if (user) {
+        firebase.auth().signOut()
+            .then(() => {
+                console.log('Cerrar sesión');
+                mainView.router.navigate('/index/');
+                $$('#mName').text('');
+            })
+            .catch((error) => {
+                console.log('error '+error);
+            });
+    } else {
+      console.log('Ya cerre sesion');
+    }
 
 }
 
