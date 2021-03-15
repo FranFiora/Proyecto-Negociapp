@@ -22,6 +22,11 @@ span {
 }
 
 /*Busqueda*/
+
+.panel {
+  max-width: 50vw;
+}
+
 #bBut {
   padding: 0px;
 }
@@ -31,16 +36,35 @@ span {
   height: 100%;
 }
 
+#nav, #navBg, #navBr {
+  height: 40px;
+}
+
+#tab-1 {
+  padding-top: 43px;
+}
+
+#divMap {
+  padding: 0px;
+  margin: 0px;
+}
+
+.H_imprint {
+  display: none;
+  visibility: hidden;
+}
+
 
 /*Pantalla Registro */
 .btnBack {
-  height: 7vh;
-  width: 12vw;
+  height: 50px;
+  width: 50px;
   border-radius: 50%;
   outline: none;
   background-color: #f23242;
   border: 0px;
 }
+
 
 /* poppins-regular - latin */
 @font-face {
