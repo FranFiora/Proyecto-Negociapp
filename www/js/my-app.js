@@ -20,6 +20,14 @@ var app = new Framework7({
         url: 'search.html',
       },
       {
+        path: '/searchCo/',
+        url: 'searchComer.html',
+      },
+      {
+        path: '/searchAd/',
+        url: 'searchAdmin.html',
+      },
+      {
         path: '/register/',
         url: 'register.html',
         options: {
@@ -69,7 +77,7 @@ $$(document).on('page:init', function (e) {
 $$(document).on('page:init', '.page[data-name="search"]', function (e) {
     
     console.log('search');
-
+    //obtener datos del usuario y mostrar nombre y apellido de la DB
     userCol.doc(email).get()
     .then((docRe) => {
         console.log(docRe.data());
@@ -79,13 +87,13 @@ $$(document).on('page:init', '.page[data-name="search"]', function (e) {
         console.log('error '+error);
     })
 
-    var icon = new H.map.Icon('img/storeicon.png');
+    var icon = new H.map.Icon('img/user.png');
     var defaultLayers = platform.createDefaultLayers();
 
     // observador de posición
     // var watchID = navigator.geolocation.watchPosition(onSuccess, onError, { timeout: 30000 });
 
-    // Instantiate (and display) a map object:
+    // Crear y mostrar mapa:
     map = new H.Map(document.getElementById('mapContainer'),
         defaultLayers.vector.normal.map,
         {
@@ -94,9 +102,9 @@ $$(document).on('page:init', '.page[data-name="search"]', function (e) {
         });
         
         coords = {lat: latitud, lng: longitud};
-        marker = new H.map.Marker(coords, {icon: icon});
+        markerP = new H.map.Marker(coords, {icon: icon});
         // Add the marker to the map and center the map at the location of the marker:
-        map.addObject(marker);
+        map.addObject(markerP);
         map.setCenter(coords);
 
         //desplazamiento
@@ -106,20 +114,32 @@ $$(document).on('page:init', '.page[data-name="search"]', function (e) {
         ui = H.ui.UI.createDefault(map, defaultLayers, 'es-ES');
         ui.getControl('mapsettings').setDisabled(true);
 
-        //burbuja al tocar el marcador
-        map.addEventListener('tap', function(t){
-            if (t.target == marker){
-                console.log('tap tap');
-                
-                var bubble = new H.ui.InfoBubble({ lng: longitud, lat: latitud }, {
-                    content: '<b>Hello World!</b>'
+        var bubble = new H.ui.InfoBubble({ lng: longitud, lat: latitud }, {
+                    content: '<b>Fiora position</b>'
                 });
                 // agregar la burbuja al mapa
                 ui.addBubble(bubble);
+                bubble.close();
+
+        //burbuja al tocar el marcador
+        map.addEventListener('tap', function(t){
+            if (t.target == markerP){
+                console.log('tap on marker');
+                //console.log(t.target);
+
+               // var tap1 = map.screenToGeo(t.currentPointer.viewportX, t.currentPointer.viewportY);
+                bubble.open();
+                
+            } else {
+                console.log('tap off marker');
+                bubble.close();
             }
 
         });
 
+    $$('#btn1').on('click', function(){setTitleBar(this)});
+    $$('#btn2').on('click', function(){setTitleBar(this)});
+    $$('#btn3').on('click', function(){setTitleBar(this)});
 
 })
 
@@ -180,6 +200,19 @@ $$(document).on('page:init', '.page[data-name="register"]', function (e) {
 
 /* --- FUNCIONES --- */
 
+/*Setear titulo navbar*/
+let setTitleBar = (d) => {
+    console.log(d.id);
+    bID = d.id
+    switch (bID) {
+        case 'btn1': $$('#titleBar').html('Buscar negocios');
+        break
+        case 'btn2': $$('#titleBar').html('Registrar negocio');
+        break
+        case 'btn3': $$('#titleBar').html('Negocios guardados');
+        break
+    }
+}
 
 /*Cerrar sesión*/
 let logOut = () => {
@@ -187,15 +220,20 @@ let logOut = () => {
     var user = firebase.auth().currentUser;
 
     if (user) {
-        firebase.auth().signOut()
+        app.dialog.confirm('¿Desea cerrar sesión?', function(){
+
+            firebase.auth().signOut()
             .then(() => {
                 console.log('Cerrar sesión');
                 mainView.router.navigate('/index/');
                 $$('#mName').text('');
+                app.panel.close('.panel');
             })
             .catch((error) => {
                 console.log('error '+error);
             });
+
+        });
     } else {
       console.log('Ya cerre sesion');
     }
@@ -226,10 +264,11 @@ let SignIn = () => {
     firebase.auth().createUserWithEmailAndPassword(email, password)
       .then((user) => {
 
-        var data = { Nombre: nombre, Apellido: apellido };
+        var data = { Nombre: nombre, Apellido: apellido, Cuenta: 'usuario' };
         userCol.doc(email).set(data);
         app.dialog.alert('Usuario creado con éxito!'+'<br/>Bienvenido '+nombre,()=>{
             mainView.router.navigate('/search/');
+
         });
 
       })
@@ -250,17 +289,38 @@ let LogIn = () => {
 
     firebase.auth().signInWithEmailAndPassword(email, password)
   .then((user) => {
-    app.dialog.alert('Inicio de sesión correcto');
-    setTimeout(function () {
-        app.dialog.close();
-        mainView.router.navigate('/search/');
-        }, 1000);
-
-  })
-  .catch((error) => {
-    var errorCode = error.code;
-    var errorMessage = error.message;
-    app.dialog.alert(error.code+'<br/>'+errorMessage);
-  });
+        userCol.doc(email).get()
+        .then((docRe) => {
+            tCuenta = docRe.data().Cuenta;
+            switch (tCuenta) {
+                case 'admin': app.dialog.alert('Inicio de sesión correcto');
+                                    setTimeout(function () {
+                                        app.dialog.close();
+                                        mainView.router.navigate('/searchAd/');
+                                }, 1000);
+                break
+                case 'usuario': app.dialog.alert('Inicio de sesión correcto');
+                                    setTimeout(function () {
+                                        app.dialog.close();
+                                        mainView.router.navigate('/search/');
+                                }, 1000);
+                break
+                case 'comercio':app.dialog.alert('Inicio de sesión correcto');
+                                    setTimeout(function () {
+                                        app.dialog.close();
+                                        mainView.router.navigate('/searchCo/');
+                                }, 1000);
+                break
+            }
+        })
+        .catch((error) => {
+            console.log('error '+error);
+        })
+    })
+    .catch((error) => {
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        app.dialog.alert(error.code+'<br/>'+errorMessage);
+    });
   
 }

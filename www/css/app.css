@@ -54,9 +54,35 @@ span {
   visibility: hidden;
 }
 
+#regLocal {
+  width: 60%;
+}
+
+#svgImg {
+  width: 30%;
+  transition: width .5s ease-in-out;
+}
+
+#svgImg:hover {
+  width: 35%;
+  animation: 1s balancear infinite;
+
+}
+
+@keyframes balancear{
+  20%{
+    transform: rotate(-6deg);
+  }
+  30%, 70%{
+    transform: rotate(6deg);
+  }
+  50%, 90%{
+    transform: rotate(-6deg);
+  }
+}
 
 /*Pantalla Registro */
-.btnBack {
+#backBtn {
   height: 50px;
   width: 50px;
   border-radius: 50%;
