@@ -46,6 +46,7 @@ var mainView = app.views.create('.view-main');
 
 var db = firebase.firestore();
 var userCol = db.collection("usuarios");
+var commerceCol = db.collection("negocios");
 
 var map, platform;
 var pos, latitud, longitud;
@@ -123,6 +124,82 @@ $$(document).on('page:init', '.page[data-name="search"]', function (e) {
 
         //burbuja al tocar el marcador
         map.addEventListener('tap', function(t){
+            //var tap1 = map.screenToGeo(t.currentPointer.viewportX, t.currentPointer.viewportY);
+            if (t.target == markerP){
+                console.log('tap on marker');
+                //console.log(t.target);
+
+                bubble.open();
+                
+            } else {
+                console.log('tap off marker');
+                bubble.close();
+                /*var bubbleclick = new H.ui.InfoBubble({ lng: tap1.lng, lat: tap1.lat },{
+                    content: '<b>what it is</b>'
+                });
+                ui.addBubble(bubbleclick);
+                bubbleclick.open();*/
+            }
+
+        });
+
+    $$('#btn1').on('click', function(){setTitleBar(this)});
+    $$('#btn2').on('click', function(){setTitleBar(this)});
+    $$('#btn3').on('click', function(){setTitleBar(this)});
+
+    $$('#regLocal').on('click', LocalReg);
+})
+
+
+$$(document).on('page:init', '.page[data-name="searchAdmin"]', function (e) {
+    
+    console.log('search admin');
+    //obtener datos del usuario y mostrar nombre y apellido de la DB
+    userCol.doc(email).get()
+    .then((docRe) => {
+        console.log(docRe.data());
+        $$('#mName').text(docRe.data().Nombre +' '+ docRe.data().Apellido);
+    })
+    .catch((error) => {
+        console.log('error '+error);
+    })
+
+    var icon = new H.map.Icon('img/user.png');
+    var defaultLayers = platform.createDefaultLayers();
+
+    // observador de posición
+    // var watchID = navigator.geolocation.watchPosition(onSuccess, onError, { timeout: 30000 });
+
+    // Crear y mostrar mapa:
+    map = new H.Map(document.getElementById('mapContainerAd'),
+        defaultLayers.vector.normal.map,
+        {
+        zoom: 14,
+        center: { lat: latitud, lng: longitud }
+        });
+        
+        coords = {lat: latitud, lng: longitud};
+        markerP = new H.map.Marker(coords, {icon: icon});
+        // Add the marker to the map and center the map at the location of the marker:
+        map.addObject(markerP);
+        map.setCenter(coords);
+
+        //desplazamiento
+        behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(map));
+
+        //interfaz
+        ui = H.ui.UI.createDefault(map, defaultLayers, 'es-ES');
+        ui.getControl('mapsettings').setDisabled(true);
+
+        var bubble = new H.ui.InfoBubble({ lng: longitud, lat: latitud }, {
+                    content: '<b>Admin position</b>'
+                });
+                // agregar la burbuja al mapa
+                ui.addBubble(bubble);
+                bubble.close();
+
+        //burbuja al tocar el marcador
+        map.addEventListener('tap', function(t){
             if (t.target == markerP){
                 console.log('tap on marker');
                 //console.log(t.target);
@@ -137,9 +214,79 @@ $$(document).on('page:init', '.page[data-name="search"]', function (e) {
 
         });
 
-    $$('#btn1').on('click', function(){setTitleBar(this)});
-    $$('#btn2').on('click', function(){setTitleBar(this)});
-    $$('#btn3').on('click', function(){setTitleBar(this)});
+    $$('#btn1ad').on('click', function(){setTitleBar(this)});
+    $$('#btn2ad').on('click', function(){setTitleBar(this)});
+    $$('#btn3ad').on('click', function(){setTitleBar(this)});
+
+})
+
+
+$$(document).on('page:init', '.page[data-name="searchComer"]', function (e) {
+    
+    console.log('search comercio');
+    //obtener datos del usuario y mostrar nombre y apellido de la DB
+    userCol.doc(email).get()
+    .then((docRe) => {
+        console.log(docRe.data());
+        $$('#mName').text(docRe.data().Nombre +' '+ docRe.data().Apellido);
+    })
+    .catch((error) => {
+        console.log('error '+error);
+    })
+
+    var icon = new H.map.Icon('img/user.png');
+    var defaultLayers = platform.createDefaultLayers();
+
+    // observador de posición
+    // var watchID = navigator.geolocation.watchPosition(onSuccess, onError, { timeout: 30000 });
+
+    // Crear y mostrar mapa:
+    map = new H.Map(document.getElementById('mapContainerCo'),
+        defaultLayers.vector.normal.map,
+        {
+        zoom: 14,
+        center: { lat: latitud, lng: longitud }
+        });
+        
+        coords = {lat: latitud, lng: longitud};
+        markerP = new H.map.Marker(coords, {icon: icon});
+        // Add the marker to the map and center the map at the location of the marker:
+        map.addObject(markerP);
+        map.setCenter(coords);
+
+        //desplazamiento
+        behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(map));
+
+        //interfaz
+        ui = H.ui.UI.createDefault(map, defaultLayers, 'es-ES');
+        ui.getControl('mapsettings').setDisabled(true);
+
+        var bubble = new H.ui.InfoBubble({ lng: longitud, lat: latitud }, {
+                    content: '<b>Comercio position</b>'
+                });
+                // agregar la burbuja al mapa
+                ui.addBubble(bubble);
+                bubble.close();
+
+        //burbuja al tocar el marcador
+        map.addEventListener('tap', function(t){
+            if (t.target == markerP){
+                console.log('tap on marker');
+                //console.log(t.target);
+
+               // var tap1 = map.screenToGeo(t.currentPointer.viewportX, t.currentPointer.viewportY);
+                bubble.open();
+                
+            } else {
+                console.log('tap off marker');
+                bubble.close();
+            }
+
+        });
+
+    $$('#btn1co').on('click', function(){setTitleBar(this)});
+    $$('#btn2co').on('click', function(){setTitleBar(this)});
+    $$('#btn3co').on('click', function(){setTitleBar(this)});
 
 })
 
@@ -253,6 +400,19 @@ let sesionCheck = () => {
 
 }
 
+/*Registrar negocio*/
+let LocalReg = () => {
+   nLocal = $$('#nameLocal').val();
+   dLocal = $$('#dirLocal').val();
+   hLocal = $$('#horaLocal').val();
+   tLocal = $$('#tipoLocal').val();
+   eLocal = $$('#emailLocal').val();
+
+   dataLocal = { nombre: nLocal, direccion: dLocal, horario: hLocal, tipo: tLocal }
+   commerceCol.doc(eLocal).set(dataLocal);
+
+   console.log()
+}
 
 /*Registro de usuario*/
 let SignIn = () => {
