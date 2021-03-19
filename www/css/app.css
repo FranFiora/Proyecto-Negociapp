@@ -8,6 +8,12 @@
 #iSearch, #iStore, #iSave {
   font-size: 20px;
 }
+#iSearchC, #iStoreC, #iSaveC {
+  font-size: 20px;
+}
+#iSearchAd, #iStoreAd, #iSaveAd {
+  font-size: 20px;
+}
 
 .small-text {
   font-size: 11px !important;
@@ -16,12 +22,15 @@
 #btn1, #btn2, #btn3 {
   padding: 2px;
 }
+#btn1co, #btn2co, #btn3co {
+  padding: 2px;
+}
 
 span {
   height: 20px;
 }
 
-/*Busqueda*/
+/*Busqueda Usuario*/
 
 .panel {
   max-width: 50vw;
@@ -79,6 +88,36 @@ span {
   50%, 90%{
     transform: rotate(-6deg);
   }
+}
+
+/*Busqueda Comercio*/
+
+#navC, #navBgC, #navBrC {
+  height: 40px;
+}
+
+#divMapC {
+  padding: 0px;
+  margin: 0px;
+}
+
+#tab-1c {
+  padding-top: 43px;
+}
+
+/*Busqueda ADMIN*/
+
+#navAd, #navBgAd, #navBrAd {
+  height: 40px;
+}
+
+#divMapA {
+  padding: 0px;
+  margin: 0px;
+}
+
+#tab-1a {
+  padding-top: 43px;
 }
 
 /*Pantalla Registro */

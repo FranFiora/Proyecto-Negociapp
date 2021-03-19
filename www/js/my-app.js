@@ -116,7 +116,7 @@ $$(document).on('page:init', '.page[data-name="search"]', function (e) {
         ui.getControl('mapsettings').setDisabled(true);
 
         var bubble = new H.ui.InfoBubble({ lng: longitud, lat: latitud }, {
-                    content: '<b>Fiora position</b>'
+                    content: '<b>User position</b>'
                 });
                 // agregar la burbuja al mapa
                 ui.addBubble(bubble);
@@ -261,6 +261,18 @@ $$(document).on('page:init', '.page[data-name="searchComer"]', function (e) {
         ui = H.ui.UI.createDefault(map, defaultLayers, 'es-ES');
         ui.getControl('mapsettings').setDisabled(true);
 
+        var circle = new H.map.Circle(
+            new H.geo.Point(latitud, longitud), //center
+            300, // Radius in meters
+            { style: {
+                fillColor: 'rgba(35, 51, 129, 0.3)',
+                lineWidth: 2,
+                strokeColor: 'rgba(114, 38, 51, 1)'
+            } }
+        );
+        circle.setData('Circle');
+        map.addObject(circle);
+
         var bubble = new H.ui.InfoBubble({ lng: longitud, lat: latitud }, {
                     content: '<b>Comercio position</b>'
                 });
@@ -347,6 +359,17 @@ $$(document).on('page:init', '.page[data-name="register"]', function (e) {
 
 /* --- FUNCIONES --- */
 
+
+/*Radio cercano
+let testObjectsEvents = (map, logEvent) => {
+    // Let's create the same style for all objects
+    var style = {
+        fillColor: 'rgba(35, 51, 129, 0.3)',
+        lineWidth: 2,
+        strokeColor: 'rgba(114, 38, 51, 1)'
+    }
+}*/
+
 /*Setear titulo navbar*/
 let setTitleBar = (d) => {
     console.log(d.id);
@@ -357,6 +380,18 @@ let setTitleBar = (d) => {
         case 'btn2': $$('#titleBar').html('Registrar negocio');
         break
         case 'btn3': $$('#titleBar').html('Negocios guardados');
+        break
+        case 'btn1co': $$('#titleBarCo').html('Buscar negocios');
+        break
+        case 'btn2co': $$('#titleBarCo').html('Mi negocio');
+        break
+        case 'btn3co': $$('#titleBarCo').html('Negocios guardados');
+        break
+        case 'btn1ad': $$('#titleBarAd').html('Buscar negocios');
+        break
+        case 'btn2ad': $$('#titleBarAd').html('Registrar negocio');
+        break
+        case 'btn3ad': $$('#titleBarAd').html('Negocios guardados');
         break
     }
 }
@@ -402,16 +437,38 @@ let sesionCheck = () => {
 
 /*Registrar negocio*/
 let LocalReg = () => {
-   nLocal = $$('#nameLocal').val();
-   dLocal = $$('#dirLocal').val();
-   hLocal = $$('#horaLocal').val();
-   tLocal = $$('#tipoLocal').val();
-   eLocal = $$('#emailLocal').val();
 
-   dataLocal = { nombre: nLocal, direccion: dLocal, horario: hLocal, tipo: tLocal }
-   commerceCol.doc(eLocal).set(dataLocal);
+    app.dialog.confirm("Si los datos son correctos presione OK", "Verifique sus datos", function(){
 
-   console.log()
+        nLocal = $$('#nameLocal').val();
+        dLocal = $$('#dirLocal').val();
+        hLocal = $$('#horaLocal').val();
+        tLocal = $$('#tipoLocal').val();
+        eLocal = $$('#emailLocal').val();
+
+        if (nLocal != "" && dLocal != "" && hLocal != "" && tLocal != "" && eLocal != "") {
+            dataLocal = { nombre: nLocal, direccion: dLocal, horario: hLocal, tipo: tLocal }
+            commerceCol.doc(eLocal).set(dataLocal)
+                .then(() => { 
+                    app.dialog.alert('Local registrado correctamente'); 
+                    userCol.doc(eLocal).update({ Cuenta: "comercio" })
+                        .then(() => {
+                            console.log("Usuario actualizado (Cuenta)");
+                            mainView.router.navigate('/searchCo/');
+                        })
+                        .catch((error) => {
+                            console.error("Error al ACTUALIZAR documento: ", error);
+                        });
+                })
+                .catch((error) => {
+                    console.error("Error al CREAR DOCUMENTO del LOCAL: ", error);
+                })
+            console.log('IF correctamente');
+        } else {
+            app.dialog.alert('Complete los campos faltantes');
+            console.log('ELSE correctamente');
+        }
+    })
 }
 
 /*Registro de usuario*/
