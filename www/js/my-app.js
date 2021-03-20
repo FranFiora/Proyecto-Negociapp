@@ -49,7 +49,7 @@ var userCol = db.collection("usuarios");
 var commerceCol = db.collection("negocios");
 
 var map, platform;
-var pos, latitud, longitud;
+var pos, latitud, longitud, localLat, localLng;
 //var mapEvents, behavior;
 
 
@@ -64,7 +64,6 @@ $$(document).on('deviceready', function() {
     platform = new H.service.Platform({
         'apikey': 'gY5i9nh39CW9Hkb8itf7umEsECDyQzdTFVq9Oy5dEiU'
     });
-
 
 });
 
@@ -88,7 +87,8 @@ $$(document).on('page:init', '.page[data-name="search"]', function (e) {
         console.log('error '+error);
     })
 
-    var icon = new H.map.Icon('img/user.png');
+    var icon = new H.map.Icon('img/alf.png');
+    var iconLocal = new H.map.Icon('img/comerce.png');
     var defaultLayers = platform.createDefaultLayers();
 
     // observador de posición
@@ -114,6 +114,33 @@ $$(document).on('page:init', '.page[data-name="search"]', function (e) {
         //interfaz
         ui = H.ui.UI.createDefault(map, defaultLayers, 'es-ES');
         ui.getControl('mapsettings').setDisabled(true);
+
+        var circle1 = new H.map.Circle(
+            new H.geo.Point(latitud, longitud), //center
+            600, // Radius in meters
+            { style: {
+                fillColor: 'rgba(106, 90, 205, 0.3)',
+                lineWidth: 3,
+                strokeColor: 'rgba(110, 0, 255, 1)'
+            } }
+        );
+        circle1.setData('Circle1');
+        map.addObject(circle1);
+
+        function MARCADORES(map) {
+            var group = new H.map.Group();
+            map.addObject(group);
+            addMarkerToGroup(group, {lat: -70.15, lng: -19.97});
+            addMarkerToGroup(group, {lat: -30.21, lng: -40.18});
+            addMarkerToGroup(group, {lat: -32.9751696, lng: -60.6692889});
+            //addMarkerToGroup(group, {lat: XXX , lng: XXX};
+        }
+        function addMarkerToGroup(group, coordinate) {
+            var markerg = new H.map.Marker(coordinate, {icon: iconLocal});
+            group.addObject(markerg);    
+        }
+        MARCADORES(map);
+
 
         var bubble = new H.ui.InfoBubble({ lng: longitud, lat: latitud }, {
                     content: '<b>User position</b>'
@@ -142,12 +169,14 @@ $$(document).on('page:init', '.page[data-name="search"]', function (e) {
             }
 
         });
+        window.addEventListener('resize', () => map.getViewPort().resize());
 
     $$('#btn1').on('click', function(){setTitleBar(this)});
     $$('#btn2').on('click', function(){setTitleBar(this)});
     $$('#btn3').on('click', function(){setTitleBar(this)});
 
     $$('#regLocal').on('click', LocalReg);
+
 })
 
 
@@ -164,7 +193,7 @@ $$(document).on('page:init', '.page[data-name="searchAdmin"]', function (e) {
         console.log('error '+error);
     })
 
-    var icon = new H.map.Icon('img/user.png');
+    var icon = new H.map.Icon('img/alf.png');
     var defaultLayers = platform.createDefaultLayers();
 
     // observador de posición
@@ -191,6 +220,18 @@ $$(document).on('page:init', '.page[data-name="searchAdmin"]', function (e) {
         ui = H.ui.UI.createDefault(map, defaultLayers, 'es-ES');
         ui.getControl('mapsettings').setDisabled(true);
 
+        var circle1 = new H.map.Circle(
+            new H.geo.Point(latitud, longitud), //center
+            600, // Radius in meters
+            { style: {
+                fillColor: 'rgba(106, 90, 205, 0.3)',
+                lineWidth: 3,
+                strokeColor: 'rgba(110, 0, 255, 1)'
+            } }
+        );
+        circle1.setData('Circle1');
+        map.addObject(circle1);
+
         var bubble = new H.ui.InfoBubble({ lng: longitud, lat: latitud }, {
                     content: '<b>Admin position</b>'
                 });
@@ -213,10 +254,12 @@ $$(document).on('page:init', '.page[data-name="searchAdmin"]', function (e) {
             }
 
         });
+        window.addEventListener('resize', () => map.getViewPort().resize());
 
     $$('#btn1ad').on('click', function(){setTitleBar(this)});
     $$('#btn2ad').on('click', function(){setTitleBar(this)});
     $$('#btn3ad').on('click', function(){setTitleBar(this)});
+
 
 })
 
@@ -234,7 +277,7 @@ $$(document).on('page:init', '.page[data-name="searchComer"]', function (e) {
         console.log('error '+error);
     })
 
-    var icon = new H.map.Icon('img/user.png');
+    var icon = new H.map.Icon('img/alf.png');
     var defaultLayers = platform.createDefaultLayers();
 
     // observador de posición
@@ -261,17 +304,17 @@ $$(document).on('page:init', '.page[data-name="searchComer"]', function (e) {
         ui = H.ui.UI.createDefault(map, defaultLayers, 'es-ES');
         ui.getControl('mapsettings').setDisabled(true);
 
-        var circle = new H.map.Circle(
+        var circle1 = new H.map.Circle(
             new H.geo.Point(latitud, longitud), //center
-            300, // Radius in meters
+            600, // Radius in meters
             { style: {
-                fillColor: 'rgba(35, 51, 129, 0.3)',
-                lineWidth: 2,
-                strokeColor: 'rgba(114, 38, 51, 1)'
+                fillColor: 'rgba(106, 90, 205, 0.3)',
+                lineWidth: 3,
+                strokeColor: 'rgba(110, 0, 255, 1)'
             } }
         );
-        circle.setData('Circle');
-        map.addObject(circle);
+        circle1.setData('Circle1');
+        map.addObject(circle1);
 
         var bubble = new H.ui.InfoBubble({ lng: longitud, lat: latitud }, {
                     content: '<b>Comercio position</b>'
@@ -295,6 +338,7 @@ $$(document).on('page:init', '.page[data-name="searchComer"]', function (e) {
             }
 
         });
+        window.addEventListener('resize', () => map.getViewPort().resize());
 
     $$('#btn1co').on('click', function(){setTitleBar(this)});
     $$('#btn2co').on('click', function(){setTitleBar(this)});
@@ -445,9 +489,30 @@ let LocalReg = () => {
         hLocal = $$('#horaLocal').val();
         tLocal = $$('#tipoLocal').val();
         eLocal = $$('#emailLocal').val();
+        if (dLocal != "") {
+           var linka = 'https://geocoder.ls.hereapi.com/6.2/geocode.json';
+            app.request.json(linka, {
+                searchtext: dLocal+', Rosario, Santa Fe',
+                apiKey: 'a5WyBGHmz8PggN7Ys6vvPWbTiiyAciHQROYMPYRHWPQ',
+                gen: '9'
+            }, 
+            function (data) {
+             // hacer algo con data
+             lpos = JSON.stringify(data);
+             console.log("geo: " + lpos);
+             localLat = data.Response.View[0].Result[0].Location.DisplayPosition.Latitude;
+             localLng = data.Response.View[0].Result[0].Location.DisplayPosition.Longitude;
+             console.log(localLat);
+             console.log(localLng);
+             GoCommer();
+            }, 
+            function(xhr, status) { console.log("error geo: "+status); } );
+        }
 
-        if (nLocal != "" && dLocal != "" && hLocal != "" && tLocal != "" && eLocal != "") {
-            dataLocal = { nombre: nLocal, direccion: dLocal, horario: hLocal, tipo: tLocal }
+        function GoCommer(){
+
+            if (nLocal != "" && dLocal != "" && hLocal != "" && tLocal != "" && eLocal != "") {
+            dataLocal = { nombre: nLocal, direccion: dLocal, horario: hLocal, tipo: tLocal, latitud: localLat, longitud: localLng }
             commerceCol.doc(eLocal).set(dataLocal)
                 .then(() => { 
                     app.dialog.alert('Local registrado correctamente'); 
@@ -464,9 +529,11 @@ let LocalReg = () => {
                     console.error("Error al CREAR DOCUMENTO del LOCAL: ", error);
                 })
             console.log('IF correctamente');
-        } else {
-            app.dialog.alert('Complete los campos faltantes');
-            console.log('ELSE correctamente');
+            } else {
+                app.dialog.alert('Complete los campos faltantes');
+                console.log('ELSE correctamente');
+            } 
+             
         }
     })
 }
