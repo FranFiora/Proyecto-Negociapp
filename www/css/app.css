@@ -105,6 +105,38 @@ span {
   padding-top: 43px;
 }
 
+#kioskito {
+  width: 40vw;
+  height: 20vh;
+}
+
+.md .toggle-icon {
+  background: #ff000085;
+}
+
+.toggle-icon:after {
+  background: #e20303;
+  position: absolute;
+  z-index: 2;
+  transform: translateX(0px);
+  transition-duration: .3s;
+}
+
+#statusST {
+  margin: 0px;
+  text-align: center;
+  color: #ff0000eb;
+  font-weight: 600;
+  background-color: #ff000033;
+  border-radius: 30px;
+}
+
+#cont-st {
+  text-align: center;
+  width: 75px;
+  border-radius: 30px;
+}
+
 /*Busqueda ADMIN*/
 
 #navAd, #navBgAd, #navBrAd {

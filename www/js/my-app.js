@@ -65,6 +65,24 @@ $$(document).on('deviceready', function() {
         'apikey': 'gY5i9nh39CW9Hkb8itf7umEsECDyQzdTFVq9Oy5dEiU'
     });
 
+    commerceCol.get()
+    .then((com) => {
+        com.forEach((doc) => {
+            // doc.data() is never undefined for query doc snapshots
+            console.log(doc.id, " => ", doc.data());
+        });
+    });
+
+    commerceCol
+    .onSnapshot((querySnapshot) => {
+        var locales = [];
+        querySnapshot.forEach((doc) => {
+            locales.push(doc.data().nombre);
+        });
+        console.log("Locales: ", locales.join(", "));
+    });
+
+
 });
 
 
@@ -343,6 +361,14 @@ $$(document).on('page:init', '.page[data-name="searchComer"]', function (e) {
     $$('#btn1co').on('click', function(){setTitleBar(this)});
     $$('#btn2co').on('click', function(){setTitleBar(this)});
     $$('#btn3co').on('click', function(){setTitleBar(this)});
+
+    $$('#status').on('click', function(){
+        if (this.checked) {
+          console.log('chequeado');
+        } else {
+            console.log('no chequeado');
+        }
+    });
 
 })
 
