@@ -41,13 +41,19 @@
             <div class="block">
                 <div class="row">
                     <img src="img/kk.png" alt="kiosko_imagen" id="kioskito" class="col-50">
-                    <div class="col-50">
+                    <div class="col-50" id="elEstado">
                         <p id="cont-st">Estado:</p>
-                        <span id="statusST">Cerrado</span>
-                        <label class="toggle toggle-init color-green">
-                            <input type="checkbox" id="status"/>
-                            <span class="toggle-icon"></span>
-                        </label>
+                        <div class="row">
+                            <div class="col-50">
+                            <span class="cerrado" id="statusST">Cerrado</span>
+                            </div>
+                            <div class="col-50">
+                                <label class="toggle toggle-init color-green">
+                                    <input type="checkbox" id="status"/>
+                                    <span class="toggle-icon"></span>
+                                </label>
+                            </div>
+                        </div>
                     </div>
                 </div>
                     <div class="list no-hairlines-md">
@@ -57,7 +63,7 @@
                                     <div class="item-inner">
                                         <div class="item-title item-label">Nombre</div>
                                         <div class="item-input-wrap">
-                                            <input type="text" placeholder="Tu Local"/>
+                                            <input type="text" placeholder="Tu Local" id="nomCom" readonly/>
                                             <span class="input-clear-button"></span>
                                         </div>
                                     </div>
@@ -66,7 +72,7 @@
                                     <div class="item-inner">
                                         <div class="item-title item-label">Dirección</div>
                                         <div class="item-input-wrap">
-                                            <input type="text" placeholder="Direccion"/>
+                                            <input type="text" placeholder="Direccion" id="dirCom" readonly/>
                                             <span class="input-clear-button"></span>
                                         </div>
                                     </div>
@@ -75,7 +81,7 @@
                                     <div class="item-inner">
                                         <div class="item-title item-label">Horario</div>
                                         <div class="item-input-wrap">
-                                            <input type="text" placeholder="Horario"/>
+                                            <input type="text" placeholder="Horario" id="hsCom" readonly/>
                                             <span class="input-clear-button"></span>
                                         </div>
                                     </div>
@@ -84,7 +90,7 @@
                                     <div class="item-inner">
                                         <div class="item-title item-label">Tipo</div>
                                         <div class="item-input-wrap input-dropdown-wrap">
-                                            <select disabled>
+                                            <select id="tipCom" disabled>
                                                 <option value="Kiosco">Kiosco</option>
                                                 <option value="Almacen">Almacén</option>
                                                 <option value="Kiosco-Almacén">Kiosco-Almacén</option>

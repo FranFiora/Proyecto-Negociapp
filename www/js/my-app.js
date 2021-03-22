@@ -295,6 +295,14 @@ $$(document).on('page:init', '.page[data-name="searchComer"]', function (e) {
         console.log('error '+error);
     })
 
+    commerceCol.doc(email).get()
+    .then((comercio) => {
+        $$('#nomCom').val(comercio.data().nombre);
+        $$('#dirCom').val(comercio.data().direccion);
+        $$('#hsCom').val(comercio.data().horario);
+        $$('#tipCom').val(comercio.data().tipo);
+    })
+
     var icon = new H.map.Icon('img/alf.png');
     var defaultLayers = platform.createDefaultLayers();
 
@@ -365,13 +373,14 @@ $$(document).on('page:init', '.page[data-name="searchComer"]', function (e) {
     $$('#status').on('click', function(){
         if (this.checked) {
           console.log('chequeado');
+          $$('#statusST').text('Abierto').removeClass('cerrado').addClass('abierto');
         } else {
             console.log('no chequeado');
+            $$('#statusST').text('Cerrado').removeClass('abierto').addClass('cerrado');
         }
     });
 
 })
-
 
 /*Page init de Inicio de sesion*/
 $$(document).on('page:init', '.page[data-name="index"]', function (e) {
@@ -388,18 +397,8 @@ $$(document).on('page:init', '.page[data-name="index"]', function (e) {
         longitud = position.coords.longitude;
         console.log(latitud);
         console.log(longitud);
-        /*alert('Latitude: '          + position.coords.latitude          + '\n' +
-              'Longitude: '         + position.coords.longitude         + '\n' +
-              'Altitude: '          + position.coords.altitude          + '\n' +
-              'Accuracy: '          + position.coords.accuracy          + '\n' +
-              'Altitude Accuracy: ' + position.coords.altitudeAccuracy  + '\n' +
-              'Heading: '           + position.coords.heading           + '\n' +
-              'Speed: '             + position.coords.speed             + '\n' +
-              'Timestamp: '         + position.timestamp                + '\n');*/
     };
- 
-    // onError Callback receives a PositionError object
-    //
+
     onError = function(error) {
         alert('code: '    + error.code    + '\n' +
               'message: ' + error.message + '\n');
@@ -442,7 +441,6 @@ let testObjectsEvents = (map, logEvent) => {
 
 /*Setear titulo navbar*/
 let setTitleBar = (d) => {
-    console.log(d.id);
     bID = d.id
     switch (bID) {
         case 'btn1': $$('#titleBar').html('Buscar negocios');
