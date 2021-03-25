@@ -50,9 +50,10 @@ var commerceCol = db.collection("negocios");
 
 var map, platform;
 var pos, latitud, longitud, localLat, localLng;
-//var mapEvents, behavior;
-
-
+var nombreUser;
+var arrayMarcadores= [];
+var latMark = [];
+var lonMark = [];
 
 // Handle Cordova Device Ready Event
 $$(document).on('deviceready', function() {
@@ -65,15 +66,20 @@ $$(document).on('deviceready', function() {
         'apikey': 'gY5i9nh39CW9Hkb8itf7umEsECDyQzdTFVq9Oy5dEiU'
     });
 
-    commerceCol.get()
+    /*commerceCol.get()
     .then((com) => {
         com.forEach((doc) => {
             // doc.data() is never undefined for query doc snapshots
             console.log(doc.id, " => ", doc.data());
-        });
-    });
+            larad = doc.data().latitud;
+            larab = doc.data().longitud;
+            console.log("larad", larad);
+            console.log("larab", larab);
 
-    commerceCol
+        });
+    });*/
+
+   /* commerceCol
     .onSnapshot((querySnapshot) => {
         var locales = [];
         querySnapshot.forEach((doc) => {
@@ -81,7 +87,7 @@ $$(document).on('deviceready', function() {
         });
         console.log("Locales: ", locales.join(", "));
     });
-
+*/
 
 });
 
@@ -145,39 +151,80 @@ $$(document).on('page:init', '.page[data-name="search"]', function (e) {
         circle1.setData('Circle1');
         map.addObject(circle1);
 
+
+        function distancia(lat1, lon1, lat2, lon2){
+            // Usamos la API de google para medir la distancia entre 2 puntos
+            var ubi1 = new google.maps.LatLng(lat1, lon1);
+            var ubi2 = new google.maps.LatLng(lat2, lon2)
+            var distance = google.maps.geometry.spherical.computeDistanceBetween(ubi1, ubi2);
+            // distancia en metros
+            console.log(((distance).toFixed(0) + ' metros'));
+            return ((distance).toFixed(0))
+        }  
+
+
         function MARCADORES(map) {
-            var group = new H.map.Group();
+            group = new H.map.Group();
             map.addObject(group);
-            addMarkerToGroup(group, {lat: -70.15, lng: -19.97});
-            addMarkerToGroup(group, {lat: -30.21, lng: -40.18});
-            addMarkerToGroup(group, {lat: -32.9751696, lng: -60.6692889});
+            commerceCol.get()
+            .then((com) => {
+                coma = com;
+                console.log(coma);
+                com.forEach((doc) => {
+                    // doc.data() is never undefined for query doc snapshots
+                    //console.log(doc.id, " => ", doc.data());
+                    lata=(doc.data().latitud);
+                    longa=(doc.data().longitud);
+                    arrayPushea(lata, longa);
+
+                    //addMarkerToGroup(group, {lat: lata, lng: longa});
+
+                });
+
+            });
+            //addMarkerToGroup(group, {lat: -30.21, lng: -40.18});
+            //addMarkerToGroup(group, {lat: -32.9751696, lng: -60.6692889});
             //addMarkerToGroup(group, {lat: XXX , lng: XXX};
         }
         function addMarkerToGroup(group, coordinate) {
-            var markerg = new H.map.Marker(coordinate, {icon: iconLocal});
+            markerg = new H.map.Marker(coordinate, {icon: iconLocal});
             group.addObject(markerg);    
         }
         MARCADORES(map);
 
+        distancia(latitud, longitud, -32.979020, -60.669609);
+        
+        userCol.doc(email).get()
+        .then((docRe) => {
+            nombreUser = docRe.data().Nombre;
+            bubble = new H.ui.InfoBubble({ lng: longitud, lat: latitud }, {
+                        content: '<b>Posicion de '+nombreUser+'</b>'
+                    });
+            // agregar la burbuja al mapa
+            ui.addBubble(bubble);
+            bubble.close();
+        })
+        .catch((error) => {
+            console.log('error '+error);
+        })
 
-        var bubble = new H.ui.InfoBubble({ lng: longitud, lat: latitud }, {
-                    content: '<b>User position</b>'
-                });
-                // agregar la burbuja al mapa
-                ui.addBubble(bubble);
-                bubble.close();
-
+        group.addEventListener('pointerdown', function(evt){
+            console.log(evt.target);
+            if (evt.target == markerg) {
+                console.log('group');
+            }
+        });
         //burbuja al tocar el marcador
         map.addEventListener('tap', function(t){
             //var tap1 = map.screenToGeo(t.currentPointer.viewportX, t.currentPointer.viewportY);
             if (t.target == markerP){
-                console.log('tap on marker');
+                console.log('tap on user position');
                 //console.log(t.target);
 
                 bubble.open();
                 
             } else {
-                console.log('tap off marker');
+                console.log('tap off user position');
                 bubble.close();
                 /*var bubbleclick = new H.ui.InfoBubble({ lng: tap1.lng, lat: tap1.lat },{
                     content: '<b>what it is</b>'
@@ -250,12 +297,19 @@ $$(document).on('page:init', '.page[data-name="searchAdmin"]', function (e) {
         circle1.setData('Circle1');
         map.addObject(circle1);
 
-        var bubble = new H.ui.InfoBubble({ lng: longitud, lat: latitud }, {
-                    content: '<b>Admin position</b>'
-                });
-                // agregar la burbuja al mapa
-                ui.addBubble(bubble);
-                bubble.close();
+        userCol.doc(email).get()
+        .then((docRe) => {
+            nombreUser = docRe.data().Nombre;
+            bubble = new H.ui.InfoBubble({ lng: longitud, lat: latitud }, {
+                        content: '<b>Posicion de '+nombreUser+'</b>'
+                    });
+            // agregar la burbuja al mapa
+            ui.addBubble(bubble);
+            bubble.close();
+        })
+        .catch((error) => {
+            console.log('error '+error);
+        })
 
         //burbuja al tocar el marcador
         map.addEventListener('tap', function(t){
@@ -277,7 +331,6 @@ $$(document).on('page:init', '.page[data-name="searchAdmin"]', function (e) {
     $$('#btn1ad').on('click', function(){setTitleBar(this)});
     $$('#btn2ad').on('click', function(){setTitleBar(this)});
     $$('#btn3ad').on('click', function(){setTitleBar(this)});
-
 
 })
 
@@ -342,12 +395,19 @@ $$(document).on('page:init', '.page[data-name="searchComer"]', function (e) {
         circle1.setData('Circle1');
         map.addObject(circle1);
 
-        var bubble = new H.ui.InfoBubble({ lng: longitud, lat: latitud }, {
-                    content: '<b>Comercio position</b>'
-                });
-                // agregar la burbuja al mapa
-                ui.addBubble(bubble);
-                bubble.close();
+        userCol.doc(email).get()
+        .then((docRe) => {
+            nombreUser = docRe.data().Nombre;
+            bubble = new H.ui.InfoBubble({ lng: longitud, lat: latitud }, {
+                        content: '<b>Posicion de '+nombreUser+'</b>'
+                    });
+            // agregar la burbuja al mapa
+            ui.addBubble(bubble);
+            bubble.close();
+        })
+        .catch((error) => {
+            console.log('error '+error);
+        })
 
         //burbuja al tocar el marcador
         map.addEventListener('tap', function(t){
@@ -411,9 +471,7 @@ $$(document).on('page:init', '.page[data-name="index"]', function (e) {
 
 /*Page init de Registro*/
 $$(document).on('page:init', '.page[data-name="register"]', function (e) {
-    
     console.log('register');
-
     $$('#backBtn').on('click', ()=>{
         app.dialog.confirm('¿Quieres cancelar el registro?',()=>{
             mainView.router.navigate('/index/');
@@ -421,8 +479,6 @@ $$(document).on('page:init', '.page[data-name="register"]', function (e) {
     })
 
     $$('#btnRegistrar').on('click', SignIn);
-
-
 })
 
 
@@ -438,6 +494,14 @@ let testObjectsEvents = (map, logEvent) => {
         strokeColor: 'rgba(114, 38, 51, 1)'
     }
 }*/
+
+arrayPushea = (lt, lg) => {
+    console.log(lt, lg);
+    latMark.push(lt);
+    console.log("latitudes: ", latMark);
+    lonMark.push(lg);
+    console.log("longitud: ", lonMark);
+}
 
 /*Setear titulo navbar*/
 let setTitleBar = (d) => {
@@ -466,9 +530,7 @@ let setTitleBar = (d) => {
 
 /*Cerrar sesión*/
 let logOut = () => {
-
     var user = firebase.auth().currentUser;
-
     if (user) {
         app.dialog.confirm('¿Desea cerrar sesión?', function(){
 
@@ -482,12 +544,10 @@ let logOut = () => {
             .catch((error) => {
                 console.log('error '+error);
             });
-
         });
     } else {
       console.log('Ya cerre sesion');
     }
-
 }
 
 
@@ -500,7 +560,6 @@ let sesionCheck = () => {
     } else {
       console.log('no inicio sesion');
     }
-
 }
 
 /*Registrar negocio*/
@@ -522,8 +581,7 @@ let LocalReg = () => {
             }, 
             function (data) {
              // hacer algo con data
-             lpos = JSON.stringify(data);
-             console.log("geo: " + lpos);
+             //lpos = JSON.stringify(data);
              localLat = data.Response.View[0].Result[0].Location.DisplayPosition.Latitude;
              localLng = data.Response.View[0].Result[0].Location.DisplayPosition.Longitude;
              console.log(localLat);
@@ -556,8 +614,7 @@ let LocalReg = () => {
             } else {
                 app.dialog.alert('Complete los campos faltantes');
                 console.log('ELSE correctamente');
-            } 
-             
+            }  
         }
     })
 }
@@ -585,8 +642,6 @@ let SignIn = () => {
         var errorMessage = error.message;
         app.dialog.alert('Falló la creación<br/>'+errorCode+'<br/>'+errorMessage);
     });
-
-
 }
 
 /*Inicio de sesion*/
