@@ -81,6 +81,11 @@ span {
 
 }
 
+#hDesde, #hHasta {
+  margin: 0px;
+  width: 8.5vw;
+}
+
 @keyframes balancear{
   20%{
     transform: rotate(-6deg);
