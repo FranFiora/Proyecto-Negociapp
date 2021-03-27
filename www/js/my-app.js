@@ -47,6 +47,7 @@ var mainView = app.views.create('.view-main');
 var db = firebase.firestore();
 var userCol = db.collection("usuarios");
 var commerceCol = db.collection("negocios");
+var saveCol = db.collection("guardados");
 
 var map, platform;
 var pos, latitud, longitud, localLat, localLng;
@@ -57,6 +58,8 @@ var lonMark = [];
 var nomMark = [];
 var tipMark = [];
 var dirMark = [];
+var horMark = [];
+var idBMark = [];
 
 // Handle Cordova Device Ready Event
 $$(document).on('deviceready', function() {
@@ -74,7 +77,12 @@ $$(document).on('deviceready', function() {
 $$(document).on('page:init', '.page[data-name="search"]', function (e) {
     latMark = [];
     lonMark = [];
-    
+    nomMark = [];
+    tipMark = [];
+    dirMark = [];
+    horMark = [];
+    idBMark = [];
+
     console.log('search');
     //obtener datos del usuario y mostrar nombre y apellido de la DB
     userCol.doc(email).get()
@@ -140,13 +148,16 @@ $$(document).on('page:init', '.page[data-name="search"]', function (e) {
             commerceCol.get()
             .then((com) => {
                 com.forEach((doc) => {
+                    console.log(doc.data().nombre);
                     nomDoc = doc.data().nombre;
                     tipDoc = doc.data().tipo;
                     dirDoc = doc.data().direccion;
+                    horDoc = doc.data().horario;
+                    idsDoc = doc.id;
                     lata = doc.data().latitud;
                     longa= doc.data().longitud;
                     arrayPushea(lata, longa);
-                    documentPushea(nomDoc, tipDoc, dirDoc);
+                    documentPushea(nomDoc, tipDoc, dirDoc, horDoc, idsDoc);
                 });
                 console.log('el largo del array de latMark => ', latMark.length);
                 console.log('el largo del array de nomMark => ', nomMark.length);
@@ -155,11 +166,22 @@ $$(document).on('page:init', '.page[data-name="search"]', function (e) {
                     console.log("posicion: ",i," latMark ", latMark[i], " lonMark ", lonMark[i]);
                     marker = new H.map.Marker({lat: latMark[i], lng: lonMark[i]}, {icon: iconLocal});
                     distanciaLegal(latMark[i], lonMark[i]);
-                    marker.setData("<b>Tienda: </b>"+nomMark[i]+"<br/><b>Tipo: </b>"+tipMark[i]+"<br/><b>Direccion: </b>"+dirMark[i]);
-
+                    marker.setData('<b>Tienda: </b>'+nomMark[i]+'<br/><b>Tipo: </b>'+tipMark[i]+'<br/><b>Direccion: </b>'+dirMark[i]+'<br/><b>Horario: </b>'+horMark[i]+`
+                        <div class="text-align-center"><span class="icon material-icons button guardado" id="`+nomMark[i]+`" onclick="Guardar(this)" email="`+idBMark[i]+`">bookmark_border</span></div>`);
                 }
             });
         }
+            /*commerceCol
+                .onSnapshot((snapshot)=>{
+                    snapshot.docChanges().forEach((change)=>{
+                        if (change.type === "modified") {
+                            console.log("En el doc: ", change.doc.id);
+                            console.log("Estado modificado: ", change.doc.data().estado);
+                            map.removeObjects(map.getObjects(marker));
+                            MARCADORES(map);
+                        }
+                    })
+                })*/
 
         MARCADORES(map);
 
@@ -177,6 +199,10 @@ $$(document).on('page:init', '.page[data-name="search"]', function (e) {
                 bubble.open();
             }
         });
+        /*map.addEventListener('longpress', function(t){
+            console.log('mantuve precionado');
+            console.log(t.target.getData('Nidea'));
+        });*/
         window.addEventListener('resize', () => map.getViewPort().resize());
 
     $$('#btn1').on('click', function(){setTitleBar(this)});
@@ -191,6 +217,10 @@ $$(document).on('page:init', '.page[data-name="search"]', function (e) {
 $$(document).on('page:init', '.page[data-name="searchAdmin"]', function (e) {
     latMark = [];
     lonMark = [];
+    nomMark = [];
+    tipMark = [];
+    dirMark = [];
+    horMark = [];
 
     console.log('search admin');
     //obtener datos del usuario y mostrar nombre y apellido de la DB
@@ -260,10 +290,11 @@ $$(document).on('page:init', '.page[data-name="searchAdmin"]', function (e) {
                     nomDoc = doc.data().nombre;
                     tipDoc = doc.data().tipo;
                     dirDoc = doc.data().direccion;
+                    horDoc = doc.data().estado;
                     lata = doc.data().latitud;
                     longa= doc.data().longitud;
                     arrayPushea(lata, longa);
-                    documentPushea(nomDoc, tipDoc, dirDoc);
+                    documentPushea(nomDoc, tipDoc, dirDoc, horDoc);
                 });
                 console.log('el largo del array de latMark => ', latMark.length);
                 console.log('el largo del array de nomMark => ', nomMark.length);
@@ -272,7 +303,7 @@ $$(document).on('page:init', '.page[data-name="searchAdmin"]', function (e) {
                     console.log("posicion: ",i," latMark ", latMark[i], " lonMark ", lonMark[i]);
                     marker = new H.map.Marker({lat: latMark[i], lng: lonMark[i]}, {icon: iconLocal});
                     distanciaLegal(latMark[i], lonMark[i]);
-                    marker.setData("<b>Tienda: </b>"+nomMark[i]+"<br/><b>Tipo: </b>"+tipMark[i]+"<br/><b>Direccion: </b>"+dirMark[i]);
+                    marker.setData("<b>Tienda: </b>"+nomMark[i]+"<br/><b>Tipo: </b>"+tipMark[i]+"<br/><b>Direccion: </b>"+dirMark[i]+"<br/><b>Horario: </b>"+horMark[i]);
 
                 }
             });
@@ -306,6 +337,10 @@ $$(document).on('page:init', '.page[data-name="searchAdmin"]', function (e) {
 $$(document).on('page:init', '.page[data-name="searchComer"]', function (e) {
     latMark = [];
     lonMark = [];
+    nomMark = [];
+    tipMark = [];
+    dirMark = [];
+    horMark = [];
 
     console.log('search comercio');
     //obtener datos del usuario y mostrar nombre y apellido de la DB
@@ -383,10 +418,11 @@ $$(document).on('page:init', '.page[data-name="searchComer"]', function (e) {
                     nomDoc = doc.data().nombre;
                     tipDoc = doc.data().tipo;
                     dirDoc = doc.data().direccion;
+                    horDoc = doc.data().estado;
                     lata = doc.data().latitud;
                     longa= doc.data().longitud;
                     arrayPushea(lata, longa);
-                    documentPushea(nomDoc, tipDoc, dirDoc);
+                    documentPushea(nomDoc, tipDoc, dirDoc, horDoc);
                 });
                 console.log('el largo del array de latMark => ', latMark.length);
                 console.log('el largo del array de nomMark => ', nomMark.length);
@@ -395,7 +431,7 @@ $$(document).on('page:init', '.page[data-name="searchComer"]', function (e) {
                     console.log("posicion: ",i," latMark ", latMark[i], " lonMark ", lonMark[i]);
                     marker = new H.map.Marker({lat: latMark[i], lng: lonMark[i]}, {icon: iconLocal});
                     distanciaLegal(latMark[i], lonMark[i]);
-                    marker.setData("<b>Tienda: </b>"+nomMark[i]+"<br/><b>Tipo: </b>"+tipMark[i]+"<br/><b>Direccion: </b>"+dirMark[i]);
+                    marker.setData("<b>Tienda: </b>"+nomMark[i]+"<br/><b>Tipo: </b>"+tipMark[i]+"<br/><b>Direccion: </b>"+dirMark[i]+"<br/><b>Estado: </b>"+horMark[i]);
 
                 }
             });
@@ -483,9 +519,12 @@ distanciaCirculo = (lat1, lon1, lat2, lon2) => {
     distMax = google.maps.geometry.spherical.computeDistanceBetween(ubi1, ubi2);
     distMax2 = google.maps.geometry.spherical.computeDistanceBetween(ubi1, ubi3);
     distTotal = distMax + distMax2;
+    distTotal = distTotal.toFixed(0);
+    //DistDelLim = google.maps.geometry.spherical.computeDistanceBetween(ubi2, ubi3);
     // distancia en metros
-    console.log(((distTotal).toFixed(0) + ' metros'));
-    return ((distTotal).toFixed(0))
+    console.log(distTotal + ' metros');
+    //console.log(((DistDelLim).toFixed(0) + ' metros'));
+    return (distTotal)
 }
 
 /*Calcular si el local esta dentro del radio*/
@@ -507,10 +546,12 @@ distanciaLegal = (lati, long) => {
 }
 
 /*Array de datos del local*/
-documentPushea = (nom, tip, dir) => {
+documentPushea = (nom, tip, dir, hor, ids) => {
     nomMark.push(nom);
     tipMark.push(tip);
     dirMark.push(dir);
+    horMark.push(hor);
+    idBMark.push(ids);
 }
 
 /*Array de latitudes y longitudes*/
@@ -598,7 +639,6 @@ arrayPushea = (lt, lg) => {
             }, 
             function (data) {
              // hacer algo con data
-             //lpos = JSON.stringify(data);
              localLat = data.Response.View[0].Result[0].Location.DisplayPosition.Latitude;
              localLng = data.Response.View[0].Result[0].Location.DisplayPosition.Longitude;
              console.log(localLat);
@@ -611,7 +651,7 @@ arrayPushea = (lt, lg) => {
         function GoCommer(){
 
             if (nLocal != "" && dLocal != "" && hLocal != "" && tLocal != "" && eLocal != "") {
-            dataLocal = { nombre: nLocal, direccion: dLocal, horario: hLocal, tipo: tLocal, latitud: localLat, longitud: localLng }
+            dataLocal = { nombre: nLocal, direccion: dLocal, horario: hLocal, tipo: tLocal, latitud: localLat, longitud: localLng, estado: 'Abierto' }
             commerceCol.doc(eLocal).set(dataLocal)
                 .then(() => { 
                     app.dialog.alert('Local registrado correctamente'); 
@@ -677,19 +717,19 @@ arrayPushea = (lt, lg) => {
                                     setTimeout(function () {
                                         app.dialog.close();
                                         mainView.router.navigate('/searchAd/');
-                                }, 1000);
+                                    }, 1000);
                 break
                 case 'usuario': app.dialog.alert('Inicio de sesión correcto');
                                     setTimeout(function () {
                                         app.dialog.close();
                                         mainView.router.navigate('/search/');
-                                }, 1000);
+                                    }, 1000);
                 break
                 case 'comercio':app.dialog.alert('Inicio de sesión correcto');
                                     setTimeout(function () {
                                         app.dialog.close();
                                         mainView.router.navigate('/searchCo/');
-                                }, 1000);
+                                    }, 1000);
                 break
             }
         })
@@ -703,4 +743,18 @@ arrayPushea = (lt, lg) => {
         app.dialog.alert(error.code+'<br/>'+errorMessage);
     });
   
+}
+
+function Guardar(el) {
+    var id = el.id;
+    id = id.replace(' ', '-');
+    console.log(id);
+    if ($$('#'+id).hasClass('Noguardado')) {
+        $$('#'+id).html('bookmark');
+        $$('#'+id).addClass('guardado').removeClass('Noguardado');
+        saveCol.doc(id).set();
+    } else {
+        $$('#'+id).addClass('Noguardado').removeClass('guardado');
+        $$('#'+id).html('bookmark_border');
+    }
 }

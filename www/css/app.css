@@ -81,6 +81,26 @@ span {
 
 }
 
+.block-strong {
+  padding: 3px;
+  margin: 10px;
+}
+
+.H_ib_body {
+  width: 40vw;
+}
+
+.H_ib_content {
+  margin: 16px !important;
+}
+
+.guardado {
+  
+}
+.Noguardado {
+
+}
+
 #hDesde, #hHasta {
   margin: 0px;
   width: 8.5vw;
@@ -269,4 +289,9 @@ span {
 	font-family: 'Poppins', Arial, sans-serif;
 }
 
-
+@media (max-width: 600px) {
+  #hDesde, #hHasta {
+    margin: 0px;
+    width: 22vw;
+  }
+}
