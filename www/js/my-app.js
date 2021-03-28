@@ -59,7 +59,6 @@ var nomMark = [];
 var tipMark = [];
 var dirMark = [];
 var horMark = [];
-var idBMark = [];
 
 // Handle Cordova Device Ready Event
 $$(document).on('deviceready', function() {
@@ -81,7 +80,6 @@ $$(document).on('page:init', '.page[data-name="search"]', function (e) {
     tipMark = [];
     dirMark = [];
     horMark = [];
-    idBMark = [];
 
     console.log('search');
     //obtener datos del usuario y mostrar nombre y apellido de la DB
@@ -93,6 +91,42 @@ $$(document).on('page:init', '.page[data-name="search"]', function (e) {
     .catch((error) => {
         console.log('error '+error);
     })
+
+    commerceCol.get()
+    .then((querysnapp)=>{
+        querysnapp.forEach((docI)=>{
+            var idL = docI.id;
+            var nombreL = docI.data().nombre;
+            var direcL = docI.data().direccion;
+            var horaL = docI.data().horario;
+            $$('#cargaLocales').append(`
+                <div class="block block-strong row">
+                    <div class="col-45">
+                        <p>`+nombreL+`</p>
+                        <p>`+direcL+`</p>
+                    </div>
+                    <div class="col-45">
+                        <p>`+horaL+`hs</p>
+                        <span class="abierto">Abierto</span>
+                    </div>
+                    <div class="col-20">
+                        <button class="heF text-align-center icon material-icons button button-small" id="`+nombreL+`" guardar="`+idL+`">
+                        bookmark_border</button>
+                    </div>
+                </div>`);
+
+            $$('#'+nombreL).on('click', ()=>{
+                var sv = $$('#'+nombreL).attr('guardar');
+                console.log(sv);
+                if ($$('#'+nombreL).text() == 'bookmark_border') {
+                    $$('#'+nombreL).text('bookmark');
+                } else {
+                    $$('#'+nombreL).text('bookmark_border');
+                }
+            })
+
+        });
+    });
 
     var icon = new H.map.Icon('img/alf.png');
     var iconLocal = new H.map.Icon('img/comerce.png');
@@ -153,11 +187,10 @@ $$(document).on('page:init', '.page[data-name="search"]', function (e) {
                     tipDoc = doc.data().tipo;
                     dirDoc = doc.data().direccion;
                     horDoc = doc.data().horario;
-                    idsDoc = doc.id;
                     lata = doc.data().latitud;
                     longa= doc.data().longitud;
                     arrayPushea(lata, longa);
-                    documentPushea(nomDoc, tipDoc, dirDoc, horDoc, idsDoc);
+                    documentPushea(nomDoc, tipDoc, dirDoc, horDoc);
                 });
                 console.log('el largo del array de latMark => ', latMark.length);
                 console.log('el largo del array de nomMark => ', nomMark.length);
@@ -166,32 +199,18 @@ $$(document).on('page:init', '.page[data-name="search"]', function (e) {
                     console.log("posicion: ",i," latMark ", latMark[i], " lonMark ", lonMark[i]);
                     marker = new H.map.Marker({lat: latMark[i], lng: lonMark[i]}, {icon: iconLocal});
                     distanciaLegal(latMark[i], lonMark[i]);
-                    marker.setData('<b>Tienda: </b>'+nomMark[i]+'<br/><b>Tipo: </b>'+tipMark[i]+'<br/><b>Direccion: </b>'+dirMark[i]+'<br/><b>Horario: </b>'+horMark[i]+`
-                        <div class="text-align-center"><span class="icon material-icons button guardado" id="`+nomMark[i]+`" onclick="Guardar(this)" email="`+idBMark[i]+`">bookmark_border</span></div>`);
+                    marker.setData('<b>Tienda: </b>'+nomMark[i]+'<br/><b>Tipo: </b>'+tipMark[i]+'<br/><b>Direccion: </b>'+dirMark[i]+'<br/><b>Horario: </b>'+horMark[i]);
                 }
             });
         }
-            /*commerceCol
-                .onSnapshot((snapshot)=>{
-                    snapshot.docChanges().forEach((change)=>{
-                        if (change.type === "modified") {
-                            console.log("En el doc: ", change.doc.id);
-                            console.log("Estado modificado: ", change.doc.data().estado);
-                            map.removeObjects(map.getObjects(marker));
-                            MARCADORES(map);
-                        }
-                    })
-                })*/
-
         MARCADORES(map);
 
         //burbuja al tocar el marcador
         map.addEventListener('tap', function(t){
             //var tap1 = map.screenToGeo(t.currentPointer.viewportX, t.currentPointer.viewportY);
             if (t.target instanceof H.map.Marker) {
-                var position = t.target.getGeometry(), data = t.target.getData()
-
-                 var bubble = new H.ui.InfoBubble(position, {
+                var position = t.target.getGeometry(), data = t.target.getData();
+                var bubble = new H.ui.InfoBubble(position, {
                         content: data
                     });
                 // agregar la burbuja al mapa
@@ -199,10 +218,6 @@ $$(document).on('page:init', '.page[data-name="search"]', function (e) {
                 bubble.open();
             }
         });
-        /*map.addEventListener('longpress', function(t){
-            console.log('mantuve precionado');
-            console.log(t.target.getData('Nidea'));
-        });*/
         window.addEventListener('resize', () => map.getViewPort().resize());
 
     $$('#btn1').on('click', function(){setTitleBar(this)});
@@ -287,10 +302,11 @@ $$(document).on('page:init', '.page[data-name="searchAdmin"]', function (e) {
             commerceCol.get()
             .then((com) => {
                 com.forEach((doc) => {
+                    console.log(doc.data().nombre);
                     nomDoc = doc.data().nombre;
                     tipDoc = doc.data().tipo;
                     dirDoc = doc.data().direccion;
-                    horDoc = doc.data().estado;
+                    horDoc = doc.data().horario;
                     lata = doc.data().latitud;
                     longa= doc.data().longitud;
                     arrayPushea(lata, longa);
@@ -303,12 +319,10 @@ $$(document).on('page:init', '.page[data-name="searchAdmin"]', function (e) {
                     console.log("posicion: ",i," latMark ", latMark[i], " lonMark ", lonMark[i]);
                     marker = new H.map.Marker({lat: latMark[i], lng: lonMark[i]}, {icon: iconLocal});
                     distanciaLegal(latMark[i], lonMark[i]);
-                    marker.setData("<b>Tienda: </b>"+nomMark[i]+"<br/><b>Tipo: </b>"+tipMark[i]+"<br/><b>Direccion: </b>"+dirMark[i]+"<br/><b>Horario: </b>"+horMark[i]);
-
+                    marker.setData('<b>Tienda: </b>'+nomMark[i]+'<br/><b>Tipo: </b>'+tipMark[i]+'<br/><b>Direccion: </b>'+dirMark[i]+'<br/><b>Horario: </b>'+horMark[i]);
                 }
             });
         }
-
         MARCADORES(map);
 
         //burbuja al tocar el marcador
@@ -331,6 +345,45 @@ $$(document).on('page:init', '.page[data-name="searchAdmin"]', function (e) {
     $$('#btn1ad').on('click', function(){setTitleBar(this)});
     $$('#btn2ad').on('click', function(){setTitleBar(this)});
     $$('#btn3ad').on('click', function(){setTitleBar(this)});
+
+    commerceCol.get().then((querys)=>{
+        querys.forEach((docos)=>{
+            var idN = docos.data().nombre;
+            $$('#tab-p').append(`
+                <div class="block block-strong" id="delbtn_`+idN+`">
+                <div class="cien row">
+                    <div class="col-50">
+                        <p>Nombre: `+idN+`</p>
+                    </div>
+                    <div class="col-50">
+                        <p>Direc: `+docos.data().direccion+`</p>
+                    </div>
+                    <div class="no-margin col-100"> 
+                        <p class="no-margin">Dueño: `+docos.id+`</p>
+                    </div>
+                    <button class="button button-small button-fill color-red" id="`+idN+`" emailC="`+docos.id+`">Baja</button>
+                </div>
+                </div>`);
+            $$('#'+idN).on('click',()=>{
+                var emailC = $$('#'+idN).attr('emailC');
+                commerceCol.doc(emailC).delete()
+                .then(() => {
+                    console.log("Borrando documento...");
+                    console.log("Eliminando vista del local...");
+                    $$('#delbtn_'+idN).remove();
+                    userCol.doc(emailC).update({Cuenta: 'usuario'})
+                    .then(()=>{
+                        console.log('actualizando usuario...');
+                    })
+                    .catch((errorU) => {
+                        console.error("Error actualizando usuario", errorU);
+                    });
+                }).catch((error) => {
+                    console.error("Error borrando el documento: ", error);
+                });
+            });
+        })
+    })
 
 })
 
@@ -356,9 +409,33 @@ $$(document).on('page:init', '.page[data-name="searchComer"]', function (e) {
     commerceCol.doc(email).get()
     .then((comercio) => {
         $$('#nomCom').val(comercio.data().nombre);
+        var name = comercio.data().nombre;
         $$('#dirCom').val(comercio.data().direccion);
         $$('#hsCom').val(comercio.data().horario);
         $$('#tipCom').val(comercio.data().tipo);
+        $$('#btnElm').append(`
+            <button class="button button-small button-fill button-round color-red" id="btn_`+name+`" emailC="`+comercio.id+`">eliminar mi negocio</button>`);
+        $$('#btn_'+name).on('click',()=>{
+            var TheId = $$('#btn_'+name).attr('emailC');
+            console.log(TheId);
+            app.dialog.confirm('¿Está seguro que desea quitar su negocio?', ()=>{   
+                commerceCol.doc(TheId).delete()
+                .then(() => {
+                    console.log("Negocio borrado!");
+                    userCol.doc(TheId).update({Cuenta: 'usuario'})
+                    .then(()=>{
+                        console.log('actualizando usuario...');
+                        mainView.router.navigate('/search/');
+                    })
+                    .catch((errorU) => {
+                        console.error("Error actualizando usuario", errorU);
+                    });
+                })
+                .catch((error) => {
+                    console.error("Error al borrar negocio!", error);
+                });
+            });
+        });
     })
     var iconLocal = new H.map.Icon('img/comerce.png');
     var icon = new H.map.Icon('img/alf.png');
@@ -415,10 +492,11 @@ $$(document).on('page:init', '.page[data-name="searchComer"]', function (e) {
             commerceCol.get()
             .then((com) => {
                 com.forEach((doc) => {
+                    console.log(doc.data().nombre);
                     nomDoc = doc.data().nombre;
                     tipDoc = doc.data().tipo;
                     dirDoc = doc.data().direccion;
-                    horDoc = doc.data().estado;
+                    horDoc = doc.data().horario;
                     lata = doc.data().latitud;
                     longa= doc.data().longitud;
                     arrayPushea(lata, longa);
@@ -431,12 +509,10 @@ $$(document).on('page:init', '.page[data-name="searchComer"]', function (e) {
                     console.log("posicion: ",i," latMark ", latMark[i], " lonMark ", lonMark[i]);
                     marker = new H.map.Marker({lat: latMark[i], lng: lonMark[i]}, {icon: iconLocal});
                     distanciaLegal(latMark[i], lonMark[i]);
-                    marker.setData("<b>Tienda: </b>"+nomMark[i]+"<br/><b>Tipo: </b>"+tipMark[i]+"<br/><b>Direccion: </b>"+dirMark[i]+"<br/><b>Estado: </b>"+horMark[i]);
-
+                    marker.setData('<b>Tienda: </b>'+nomMark[i]+'<br/><b>Tipo: </b>'+tipMark[i]+'<br/><b>Direccion: </b>'+dirMark[i]+'<br/><b>Horario: </b>'+horMark[i]);
                 }
             });
         }
-
         MARCADORES(map);
 
         //burbuja al tocar el marcador
@@ -468,7 +544,6 @@ $$(document).on('page:init', '.page[data-name="searchComer"]', function (e) {
             $$('#statusST').text('Cerrado').removeClass('abierto').addClass('cerrado');
         }
     });
-
 })
 
 /*Page init de Inicio de sesion*/
@@ -546,12 +621,11 @@ distanciaLegal = (lati, long) => {
 }
 
 /*Array de datos del local*/
-documentPushea = (nom, tip, dir, hor, ids) => {
+documentPushea = (nom, tip, dir, hor) => {
     nomMark.push(nom);
     tipMark.push(tip);
     dirMark.push(dir);
     horMark.push(hor);
-    idBMark.push(ids);
 }
 
 /*Array de latitudes y longitudes*/
@@ -578,7 +652,7 @@ arrayPushea = (lt, lg) => {
         break
         case 'btn1ad': $$('#titleBarAd').html('Buscar negocios');
         break
-        case 'btn2ad': $$('#titleBarAd').html('Registrar negocio');
+        case 'btn2ad': $$('#titleBarAd').html('Administrar negocios');
         break
         case 'btn3ad': $$('#titleBarAd').html('Negocios guardados');
         break
@@ -650,7 +724,7 @@ arrayPushea = (lt, lg) => {
 
         function GoCommer(){
 
-            if (nLocal != "" && dLocal != "" && hLocal != "" && tLocal != "" && eLocal != "") {
+            if (nLocal != "" && dLocal != "" && hLocal != "" && tLocal != "" && eLocal == email) {
             dataLocal = { nombre: nLocal, direccion: dLocal, horario: hLocal, tipo: tLocal, latitud: localLat, longitud: localLng, estado: 'Abierto' }
             commerceCol.doc(eLocal).set(dataLocal)
                 .then(() => { 
@@ -668,10 +742,12 @@ arrayPushea = (lt, lg) => {
                     console.error("Error al CREAR DOCUMENTO del LOCAL: ", error);
                 })
             console.log('IF correctamente');
-            } else {
+            } else if (eLocal != email){
+                app.dialog.alert('Revisa tu email.');
+                console.log('ELSE email correctamente');
+            }  else {
                 app.dialog.alert('Compe los campos faltantes');
-                console.log('ELSE correctamente');
-            }  
+            }
         }
     })
 }
@@ -743,18 +819,4 @@ arrayPushea = (lt, lg) => {
         app.dialog.alert(error.code+'<br/>'+errorMessage);
     });
   
-}
-
-function Guardar(el) {
-    var id = el.id;
-    id = id.replace(' ', '-');
-    console.log(id);
-    if ($$('#'+id).hasClass('Noguardado')) {
-        $$('#'+id).html('bookmark');
-        $$('#'+id).addClass('guardado').removeClass('Noguardado');
-        saveCol.doc(id).set();
-    } else {
-        $$('#'+id).addClass('Noguardado').removeClass('guardado');
-        $$('#'+id).html('bookmark_border');
-    }
 }

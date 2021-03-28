@@ -25,6 +25,9 @@
 #btn1co, #btn2co, #btn3co {
   padding: 2px;
 }
+#btn1ad, #btn2ad, #btn3ad {
+  padding: 2px;
+}
 
 span {
   height: 20px;
@@ -84,6 +87,15 @@ span {
 .block-strong {
   padding: 3px;
   margin: 10px;
+  background-color: #b9b9b914;
+}
+.cien {
+  width: 100%;
+}
+
+.heF {
+  height: 71px;
+  padding: 0px;
 }
 
 .H_ib_body {
@@ -92,6 +104,17 @@ span {
 
 .H_ib_content {
   margin: 16px !important;
+}
+
+.popover {
+  width: 70%;
+  font-size: 11px;
+}
+.popover-inner {
+  width: 100%;
+}
+#cargaLocales {
+  padding: 0px;
 }
 
 .guardado {
@@ -165,11 +188,13 @@ span {
 .cerrado {
   color: #ff0000eb;
   background-color: #ff000033;
+  border-radius: 30%;
 }
 
 .abierto {
   color: #3db500;
   background-color: #53ff708c;
+  border-radius: 30%;
 }
 
 #cont-st {
