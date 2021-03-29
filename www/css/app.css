@@ -59,6 +59,23 @@ span {
   padding-top: 43px;
 }
 
+#tab-3 {
+  padding-top: 40px;
+}
+#cont-guardados {
+  margin: 15px;
+  padding: 0px 12px;
+}
+.Mostrador {
+  font-size: 11px;
+  height: 10vh;
+  padding: 0px 5px;
+  margin: 5px 0px;
+  background: rgb(63,94,251);
+  background: linear-gradient(90deg, rgba(63,94,251,0.47102591036414565) 0%, rgba(252,70,107,0.3085609243697479) 100%);
+  border-radius: 5%;
+}
+
 #divMap {
   padding: 0px;
   margin: 0px;
@@ -115,13 +132,6 @@ span {
 }
 #cargaLocales {
   padding: 0px;
-}
-
-.guardado {
-  
-}
-.Noguardado {
-
 }
 
 #hDesde, #hHasta {
@@ -192,7 +202,7 @@ span {
 }
 
 .abierto {
-  color: #3db500;
+  color: #287500;
   background-color: #53ff708c;
   border-radius: 30%;
 }

@@ -80,6 +80,7 @@ $$(document).on('page:init', '.page[data-name="search"]', function (e) {
     tipMark = [];
     dirMark = [];
     horMark = [];
+    var ArrayLocalesD = [];
 
     console.log('search');
     //obtener datos del usuario y mostrar nombre y apellido de la DB
@@ -120,13 +121,64 @@ $$(document).on('page:init', '.page[data-name="search"]', function (e) {
                 console.log(sv);
                 if ($$('#'+nombreL).text() == 'bookmark_border') {
                     $$('#'+nombreL).text('bookmark');
+                    ArrayLocalesD.push(sv);
+                    datos = { LocalesGuardados: ArrayLocalesD };
+                    saveCol.doc(email).set(datos);
+                    console.log('Local guardado')
+
+                    $$('#cont-guardados').append(`
+                        <div class="Mostrador row" id="DBtn_`+nombreL+`">
+                            <div class="col-50">
+                                <p>Nombre: <b>`+nombreL+`</b></p>
+                                <p>Direc.: <b>`+direcL+`</b></p>
+                            </div>
+                            <div class="col-50">
+                                <p>Horario: <b>`+horaL+`hs</b></p>
+                                <span class="abierto">Abierto</span>
+                            </div>
+                        </div>
+                        `);
+
                 } else {
                     $$('#'+nombreL).text('bookmark_border');
+                    for (var i = 0; i < ArrayLocalesD.length; i++) {
+                        if (ArrayLocalesD[i] === sv) {
+                          ArrayLocalesD.splice(i, 1);
+                          //i--;
+                          console.log(ArrayLocalesD.length);
+                        }
+                    }
+                    saveCol.doc(email).update({ LocalesGuardados: ArrayLocalesD })
+                    .then(() => {
+                        console.log("Local desguardado");
+                        $$('#DBtn_'+nombreL).remove();
+                    })
+                    .catch((error) => {
+                        console.error("Error updating document: ", error);
+                    });
                 }
             })
 
         });
     });
+
+    /*saveCol.doc(email).
+    $$('#cont-guardados').html(`
+        <div class="Mostrador row">
+            <div class="col-45">
+                <p>Nombre: ---</p>
+                <p>Dirección: ---</p>
+            </div>
+            <div class="col-45">
+                <p>Horario: hs</p>
+                <span class="abierto">Abierto</span>
+            </div>
+            <div class="col-20">
+                <button class="heF text-align-center icon material-icons button button-small">
+                bookmark_border</button>
+            </div>
+        </div>
+        `);*/
 
     var icon = new H.map.Icon('img/alf.png');
     var iconLocal = new H.map.Icon('img/comerce.png');
